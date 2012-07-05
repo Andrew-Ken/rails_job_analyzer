@@ -1,5 +1,21 @@
 class Job < ActiveRecord::Base
   attr_accessible :company, :content, :location, :name, :web_source
+
+  def self.grab_monster
+    require 'open-uri'
+    count = 0
+    source = 'http://jobsearch.monster.com/search/rails_5'
+    doc = Nokogiri::HTML(open(source))
+    job_list = Array.new
+    doc.css('li.job').each do |job_post|
+      unit = Hash.new
+      unit[:detail_url] = job_post.css('h4.job-title a').attr('href').value
+      unit[:name] = job_post.css('h4.job-title a').text
+      unit[:uuid] = unit[:detail_url].slice(/\d+/)
+      job_list << unit
+    end
+  end
+
   def self.grab_topruby
     require 'open-uri'
     count = 0
@@ -16,7 +32,8 @@ class Job < ActiveRecord::Base
 
     current_uuid_list = Job.where(web_source: 'topruby').pluck(:uuid)
     job_list.each do |job_post|
-      unless current_uuid_list.include? job_post[:uuid]
+      # TODO: The UUID might require a string
+      unless current_uuid_list.include? job_post[:uuid].to_i
         job = Job.new
         attempts = 0
         begin
