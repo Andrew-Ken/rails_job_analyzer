@@ -1,4 +1,8 @@
 RailsJob::Application.routes.draw do
+  resources :terminologies
+
+  resources :white_lists
+
   resources :jobs
 
   # The priority is based upon order of creation:

@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Job:
+  = @terminology.job
+%p
+  %b Terms:
+  = @terminology.terms
+
+= link_to 'Edit', edit_terminology_path(@terminology)
+\|
+= link_to 'Back', terminologies_path

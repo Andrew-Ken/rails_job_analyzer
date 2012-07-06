@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120625131407) do
+ActiveRecord::Schema.define(:version => 20120706023135) do
 
   create_table "jobs", :force => true do |t|
     t.string   "name"
@@ -23,6 +23,21 @@ ActiveRecord::Schema.define(:version => 20120625131407) do
     t.datetime "updated_at", :null => false
     t.integer  "uuid"
     t.string   "detail_url"
+  end
+
+  create_table "terminologies", :force => true do |t|
+    t.integer  "job_id"
+    t.text     "terms"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "terminologies", ["job_id"], :name => "index_terminologies_on_job_id"
+
+  create_table "white_lists", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
 end

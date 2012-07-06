@@ -1,11 +1,14 @@
 class Job < ActiveRecord::Base
   attr_accessible :company, :content, :location, :name, :web_source
+  has_one :terminology
   def self.grab_topruby
     require 'open-uri'
     count = 0
     source = 'http://toprubyjobs.com'
     doc = Nokogiri::HTML(open(source))
     job_list = Array.new
+    c = hs = {first: 1, second: 2, third: 3, fourth: 4} 
+    lambda1 = -> { x + 1 }
     doc.css('li.job').each do |job_post|
       unit = Hash.new
       unit[:detail_url] = job_post.css('h4.job-title a').attr('href').value
