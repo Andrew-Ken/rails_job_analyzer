@@ -1,0 +1,9 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @white_list.name
+
+= link_to 'Edit', edit_white_list_path(@white_list)
+\|
+= link_to 'Back', white_lists_path

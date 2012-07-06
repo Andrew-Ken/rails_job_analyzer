@@ -1,0 +1,21 @@
+%h1 Listing terminologies
+
+%table
+  %tr
+    %th Job
+    %th Terms
+    %th
+    %th
+    %th
+
+  - @terminologies.each do |terminology|
+    %tr
+      %td= terminology.job
+      %td= terminology.terms
+      %td= link_to 'Show', terminology
+      %td= link_to 'Edit', edit_terminology_path(terminology)
+      %td= link_to 'Destroy', terminology, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Terminology', new_terminology_path

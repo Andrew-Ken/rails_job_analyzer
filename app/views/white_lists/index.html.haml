@@ -1,0 +1,19 @@
+%h1 Listing white_lists
+
+%table
+  %tr
+    %th Name
+    %th
+    %th
+    %th
+
+  - @white_lists.each do |white_list|
+    %tr
+      %td= white_list.name
+      %td= link_to 'Show', white_list
+      %td= link_to 'Edit', edit_white_list_path(white_list)
+      %td= link_to 'Destroy', white_list, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New White list', new_white_list_path
