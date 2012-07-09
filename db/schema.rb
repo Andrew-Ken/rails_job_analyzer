@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(:version => 20120706023135) do
 
   add_index "terminologies", ["job_id"], :name => "index_terminologies_on_job_id"
 
-  create_table "white_lists", :force => true do |t|
+  create_table "white_job_lists", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
