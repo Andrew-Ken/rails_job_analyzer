@@ -44,4 +44,19 @@ class Job < ActiveRecord::Base
     end
     count
   end
+
+  def get_term
+    WhiteJobList.pluck(:name).each do |white|
+      if self.content.downcase.include? white
+        if self.terminology.nil?
+          term = Terminology.create(terms: white)
+          self.terminology = term
+          self.save
+        else
+          self.terminology.terms += "|#{white}" 
+          self.terminology.save
+        end
+      end
+    end
+  end
 end
