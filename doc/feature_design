@@ -4,3 +4,17 @@ Report
   2. white list most valueable terms
   3. salary changing Report
   4. amount changing Report
+
+
+#TODO
+  1. job list should show reviews
+  2. job list should show terminologies and allowed user to add terminologies to certain job
+  
+
+
+Uncertain Design
+  1. How to add review to certain job require?
+
+
+Reminder
+  1. updated the Markup of readme to track how many terminologies that we already added to our project

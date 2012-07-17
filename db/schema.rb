@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120706023135) do
+ActiveRecord::Schema.define(:version => 20120717112940) do
 
   create_table "jobs", :force => true do |t|
     t.string   "name"
@@ -24,6 +24,17 @@ ActiveRecord::Schema.define(:version => 20120706023135) do
     t.integer  "uuid"
     t.string   "detail_url"
   end
+
+  create_table "reviews", :force => true do |t|
+    t.integer  "job_id"
+    t.text     "memo"
+    t.integer  "rank"
+    t.boolean  "applied"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "reviews", ["job_id"], :name => "index_reviews_on_job_id"
 
   create_table "terminologies", :force => true do |t|
     t.integer  "job_id"

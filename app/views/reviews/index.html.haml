@@ -1,0 +1,25 @@
+%h1 Listing reviews
+
+%table
+  %tr
+    %th Job
+    %th Memo
+    %th Rank
+    %th Applied
+    %th
+    %th
+    %th
+
+  - @reviews.each do |review|
+    %tr
+      %td= review.job
+      %td= review.memo
+      %td= review.rank
+      %td= review.applied
+      %td= link_to 'Show', review
+      %td= link_to 'Edit', edit_review_path(review)
+      %td= link_to 'Destroy', review, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Review', new_review_path

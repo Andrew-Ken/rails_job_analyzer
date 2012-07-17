@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Job:
+  = @review.job
+%p
+  %b Memo:
+  = @review.memo
+%p
+  %b Rank:
+  = @review.rank
+%p
+  %b Applied:
+  = @review.applied
+
+= link_to 'Edit', edit_review_path(@review)
+\|
+= link_to 'Back', reviews_path

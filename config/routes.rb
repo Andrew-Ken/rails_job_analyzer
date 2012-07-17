@@ -1,4 +1,6 @@
 RailsJob::Application.routes.draw do
+  resources :reviews
+
   resources :terminologies
 
   resources :white_lists
