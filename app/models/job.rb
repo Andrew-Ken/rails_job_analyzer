@@ -1,6 +1,7 @@
 class Job < ActiveRecord::Base
   attr_accessible :company, :content, :location, :name, :web_source
   has_one :terminology
+  has_many :reviews
 
   def self.grab_monster
     require 'open-uri'

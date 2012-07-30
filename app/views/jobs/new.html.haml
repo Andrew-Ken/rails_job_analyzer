@@ -1,5 +1,4 @@
-%h1 New job
-
-= render 'form'
-
-= link_to 'Back', jobs_path
+- model_class = Job
+.page-header
+  %h1=t '.title', :default => t('helpers.titles.new', :model => model_class.model_name.human, :default => "New #{model_class.model_name.human}")
+= render :partial => "form"

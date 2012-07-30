@@ -26,6 +26,7 @@ end
 
 gem 'jquery-rails'
 gem 'unicorn'
+gem 'nested_form'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
@@ -72,6 +73,7 @@ gem "guard-cucumber", ">= 0.6.1", :group => :development
 gem "devise", ">= 2.1.0"
 gem "cancan", ">= 1.6.7"
 gem "rolify", ">= 3.1.0"
+gem 'twitter-bootstrap-rails'
 gem "bootstrap-sass", ">= 2.0.3"
 gem "simple_form"
 gem "rails-footnotes", ">= 3.7", :group => :development

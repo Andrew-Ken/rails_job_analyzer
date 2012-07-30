@@ -1,25 +1,11 @@
-= form_for @job do |f|
-  -if @job.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@job.errors.count, "error")} prohibited this job from being saved:"
-      %ul
-        - @job.errors.full_messages.each do |msg|
-          %li= msg
-
-  .field
-    = f.label :name
-    = f.text_field :name
-  .field
-    = f.label :company
-    = f.text_field :company
-  .field
-    = f.label :location
-    = f.text_field :location
-  .field
-    = f.label :content
-    = f.text_area :content
-  .field
-    = f.label :web_source
-    = f.text_field :web_source
-  .actions
-    = f.submit 'Save'
+= simple_form_for @job, :html => { :class => 'form-horizontal' } do |f|
+  = f.input :name
+  = f.input :company
+  = f.input :location
+  = f.input :content
+  = f.input :web_source
+  = f.input :uuid
+  = f.input :detail_url
+  .form-actions
+    = f.button :submit, :class => 'btn-primary'
+    = link_to t('.cancel', :default => t("helpers.links.cancel")), jobs_path, :class => 'btn'

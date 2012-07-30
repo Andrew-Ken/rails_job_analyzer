@@ -1,21 +1,37 @@
-%p#notice= notice
+- model_class = Job
+.page-header
+  %h1=t '.title', :default => model_class.model_name.human
 
 %p
-  %b Name:
+  %strong= model_class.human_attribute_name(:name) + ':'
+  %br
   = @job.name
 %p
-  %b Company:
+  %strong= model_class.human_attribute_name(:company) + ':'
+  %br
   = @job.company
 %p
-  %b Location:
+  %strong= model_class.human_attribute_name(:location) + ':'
+  %br
   = @job.location
 %p
-  %b Content:
+  %strong= model_class.human_attribute_name(:content) + ':'
+  %br
   = @job.content
 %p
-  %b Web source:
+  %strong= model_class.human_attribute_name(:web_source) + ':'
+  %br
   = @job.web_source
+%p
+  %strong= model_class.human_attribute_name(:uuid) + ':'
+  %br
+  = @job.uuid
+%p
+  %strong= model_class.human_attribute_name(:detail_url) + ':'
+  %br
+  = @job.detail_url
 
-= link_to 'Edit', edit_job_path(@job)
-\|
-= link_to 'Back', jobs_path
+.form-actions
+  = link_to t('.back', :default => t("helpers.links.back")), jobs_path, :class => 'btn'
+  = link_to t('.edit', :default => t("helpers.links.edit")), edit_job_path(@job), :class => 'btn'
+  = link_to t('.destroy', :default => t("helpers.links.destroy")), job_path(@job), :method => "delete", :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')), :class => 'btn btn-danger'
