@@ -1,7 +1,7 @@
 class Job < ActiveRecord::Base
   attr_accessible :company, :content, :location, :name, :web_source
   has_one :terminology
-  has_many :reviews
+  has_one :reviews
 
   def self.grab_monster
     require 'open-uri'
@@ -55,10 +55,9 @@ class Job < ActiveRecord::Base
           job.save
           count += 1
         rescue Exception
-          p 
           attempts += 1
           retry unless attempts > 2
-          #exit -1
+          exit(-1)
         ensure
           puts "ensure #{attempts}" 
         end
@@ -82,8 +81,6 @@ class Job < ActiveRecord::Base
     source = 'http://toprubyjobs.com'
     doc = Nokogiri::HTML(open(source))
     job_list = Array.new
-    c = hs = {first: 1, second: 2, third: 3, fourth: 4} 
-    lambda1 = -> { x + 1 }
     doc.css('li.job').each do |job_post|
       unit = Hash.new
       unit[:detail_url] = job_post.css('h4.job-title a').attr('href').value
@@ -103,7 +100,7 @@ class Job < ActiveRecord::Base
         rescue Exception
           attempts += 1
           retry unless attempts > 2
-          exit -1
+          exit(-1)
         ensure
           puts "ensure #{attempts}" 
         end

@@ -1,0 +1,40 @@
+
+- model_class = Job
+.page-header
+  %h1=t '.title', :default => model_class.model_name.human.pluralize
+%table.table.table-striped
+  %thead
+    %tr
+      %th= model_class.human_attribute_name(:id)
+      %th= model_class.human_attribute_name(:name)
+      %th= model_class.human_attribute_name(:company)
+      %th= model_class.human_attribute_name(:location)
+      %th= model_class.human_attribute_name(:content)
+      %th
+        rank
+      %th
+        applied
+  %tbody
+    - @jobs.each do |job|
+      %tr
+        %td= link_to job.id, job_path(job)
+        %td= link_to job.name, job_path(job)
+        %td= job.company
+        %td= truncate job.location, lenght: 27
+        %td= truncate job.content, length: 27
+        %td= select 'rank', job.id, Review::RANKS, {prompt: 'Select Rank'}, {style: 'width: 120px'} 
+        %td= radio_button_tag 'applied', job.id 
+:javascript
+  $(document).ready(function() {
+    $('select').each(function(){
+      $(this).change(function() {
+        alert($(this).attr('id'));
+      });
+    });
+
+    $('input[type="radio"]').each(function() {
+      $(this).click(function() {
+        alert($(this).attr('id'));
+      });
+    });
+  })

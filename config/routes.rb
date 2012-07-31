@@ -5,7 +5,11 @@ RailsJob::Application.routes.draw do
 
   resources :white_lists
 
-  resources :jobs
+  resources :jobs do
+    collection do 
+      get 'review'
+    end
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

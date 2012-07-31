@@ -11,6 +11,14 @@ class JobsController < ApplicationController
     end
   end
 
+  def review
+    @jobs = Job.all
+    respond_to do |format|
+      format.html
+      format.json {render json: @jobs}
+    end
+  end
+
   # GET /jobs/1
   # GET /jobs/1.json
   def show
