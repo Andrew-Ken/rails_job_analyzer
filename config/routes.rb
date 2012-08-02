@@ -6,6 +6,10 @@ RailsJob::Application.routes.draw do
   resources :white_lists
 
   resources :jobs do
+    member do
+      post 'rank'
+    end
+
     collection do 
       get 'review'
     end
