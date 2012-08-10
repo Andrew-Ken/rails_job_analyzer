@@ -11,6 +11,28 @@ class JobsController < ApplicationController
     end
   end
 
+  def review
+    @jobs = Job.all
+    respond_to do |format|
+      format.html
+      format.json {render json: @jobs}
+    end
+  end
+  
+  def rank
+    id   = params[:id].to_i
+    rank = params[:rank].to_i 
+    @job = Job.find_by_id(id)
+    #TODO need to refact proper
+    if @job.review.blank?
+      @job.review = Review.create(rank: rank) 
+    else
+      @job.review.rank = rank 
+    end
+
+    render text: Review::RANKS[params[:rank].to_i][0]
+  end
+
   # GET /jobs/1
   # GET /jobs/1.json
   def show
