@@ -17,7 +17,7 @@
 %p
   %strong= model_class.human_attribute_name(:content) + ':'
   %br
-  = @job.content
+  = simple_format @job.content
 %p
   %strong= model_class.human_attribute_name(:web_source) + ':'
   %br

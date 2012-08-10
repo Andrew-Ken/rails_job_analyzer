@@ -1,0 +1,57 @@
+
+- model_class = Job
+.page-header
+  %h1=t '.title', :default => model_class.model_name.human.pluralize
+%table.table.table-striped
+  %thead
+    %tr
+      %th= model_class.human_attribute_name(:id)
+      %th= model_class.human_attribute_name(:name)
+      %th= model_class.human_attribute_name(:company)
+      %th= model_class.human_attribute_name(:location)
+      %th= model_class.human_attribute_name(:content)
+      %th
+        rank
+      %th
+        applied
+  %tbody
+    - @jobs.each do |job|
+      %tr
+        %td= link_to job.id, job_path(job)
+        %td= link_to job.name, job_path(job)
+        %td= job.company
+        %td= truncate job.location, lenght: 27
+        %td= truncate job.content, length: 27
+        %td= select 'rank', job.id, Review::RANKS, {prompt: 'Select Rank'}, {style: 'width: 120px', job_id: job.id, rank: job.review.try(:rank)} 
+        %td= radio_button_tag 'applied', job.id 
+:javascript
+  //TODO 1. need to use jason feedback 2. need to chnage to coffeescipt and seperate page
+  $(document).ready(function() {
+    $('select').each(function(){
+      var server_rank = $(this).attr('rank');
+      if( server_rank != 'null')
+      {
+        $(this).val(server_rank)
+      }
+      $(this).change(function() {
+        var job_id = $(this).attr('job_id');
+        var rank = $(this).val();
+        $.ajax({
+          type: 'post',
+          url: "/jobs/" + job_id + "/rank",
+          data:{job_id: job_id, rank: rank},
+          dataType: 'html',
+          success: function(msg){
+            //alert(msg);
+            console.log(msg);
+          }
+        });
+      });
+    });
+
+    $('input[type="radio"]').each(function() {
+      $(this).click(function() {
+        alert($(this).attr('id'));
+      });
+    });
+  })
