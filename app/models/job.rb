@@ -79,6 +79,7 @@ class Job < ActiveRecord::Base
     require 'open-uri'
     source = 'http://jobs.rubyinside.com/a/jbb/find-jobs'
     doc = Nokogiri::HTML(open(source))
+    current_uuid_list = Job.where(web_source: 'rubyinside').pluck(:uuid)
 
     unit = Hash.new
     doc.css('tr.listing').each_with_index do |job_post,index|
@@ -93,7 +94,7 @@ class Job < ActiveRecord::Base
                       else
                         unit[:detail_url].split('/')[-1]
                       end
-      else
+      elsif !current_uuid_list.include? unit[:uuid].to_i
         job = Job.new
         job.name = unit[:name]
         job.uuid = unit[:uuid]
@@ -103,6 +104,7 @@ class Job < ActiveRecord::Base
         job.content = job_post.css('.details').text
         job.web_source = 'rubyinside'
         job.save
+
         unit = Hash.new
       end
     end
