@@ -79,3 +79,5 @@ gem "simple_form"
 gem "rails-footnotes", ">= 3.7", :group => :development
 gem "will_paginate", ">= 3.0.3"
 gem "therubyracer", :group => :assets, :platform => :ruby
+gem "pry", :group => :development
+gem "hirb", :group => :development

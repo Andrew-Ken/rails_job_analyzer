@@ -1,4 +1,16 @@
 RailsJob::Application.configure do
+  silence_warnings do
+    begin
+      require 'pry'
+      IRB = Pry
+    rescue LoadError
+    end
+    require 'hirb'
+    Hirb.enable
+    Pry.config.print = proc do |output, value|
+      Hirb::View.view_or_page_output(value) || Pry::DEFAULT_PRINT.call(output, value)
+    end
+  end
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on

@@ -75,6 +75,39 @@ class Job < ActiveRecord::Base
     non_ascii_string.encode(Encoding.find('ASCII'), encoding_options).strip
   end
 
+  def self.grab_rubyinside
+    require 'open-uri'
+    source = 'http://jobs.rubyinside.com/a/jbb/find-jobs'
+    doc = Nokogiri::HTML(open(source))
+
+    unit = Hash.new
+    doc.css('tr.listing').each_with_index do |job_post,index|
+      if(index%2 == 0)
+        unit[:detail_url] = job_post.css('.title a').attr('href').value
+        unit[:name] = job_post.css('.title').text
+        unit[:company] = job_post.css('.company').text
+        unit[:location] = job_post.css('.location').text
+        unit[:uuid] = if(unit[:detail_url].include?('cjp')) 
+                        splits = unit[:detail_url].split('/')
+                        splits[splits[-2].include?('cjp') ? -2 : -1].slice(/\d+/) 
+                      else
+                        unit[:detail_url].split('/')[-1]
+                      end
+      else
+        job = Job.new
+        job.name = unit[:name]
+        job.uuid = unit[:uuid]
+        job.detail_url = unit[:detail_url]
+        job.company = unit[:company]
+        job.location = unit[:location]
+        job.content = job_post.css('.details').text
+        job.web_source = 'rubyinside'
+        job.save
+        unit = Hash.new
+      end
+    end
+  end
+
   def self.grab_topruby
     require 'open-uri'
     count = 0
