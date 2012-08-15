@@ -200,7 +200,9 @@ class Job < ActiveRecord::Base
     end
   end
 
+  # Get all terms creates terms for all the Jobs added
   def self.get_all_terms
     all.each{|x| x.get_terms}
   end
+
 end

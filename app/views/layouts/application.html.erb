@@ -23,13 +23,66 @@
                 <li><%= link_to "Browse Jobs", jobs_path %></li>
                 <li><%= link_to "Rate Jobs", review_jobs_path %></li>
                 <li><%= link_to "Contact Us" %></li>
-                <li><%= link_to "Cart" %></li>
+                <li><a href='javascript:void(0);' style= "align: right" onclick='toggleShowHide(1000)'> Show/Hide Graph </a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
 
+      <div id"current_trends">
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <div id="graphcontainer" style="min-width: 400px; height: 400px; margin: 0 auto;"></div>
+        <script>
+          $(function () {
+            var chart;
+            $(document).ready(function() {
+              chart = new Highcharts.Chart({
+                chart: {
+                  renderTo: 'graphcontainer',
+                  plotBackgroundColor: null,
+                  plotBorderWidth: null,
+                  plotShadow: false
+                },
+                title: {
+                  text: 'ROR market trends, 2012'
+                },
+                tooltip: {
+                  formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                  }
+                },
+                plotOptions: {
+                  pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                      enabled: true,
+                      color: '#000000',
+                      connectorColor: '#000000',
+                      formatter: function() {
+                        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                      }
+                    }
+                  }
+                },
+                series: [{
+                  type: 'pie',
+                  name: 'trends',
+                  data: <%=raw WhiteJobList.get_pie_chart_data.to_json %>
+              }]
+              });
+            });
+            toggleShowHide(1)
+          });
+
+          function toggleShowHide(speed) {
+            $("#graphcontainer").slideToggle(speed,'', null);
+          } 
+
+        </script>
+      </div>
 
       <div class="container">
       <%= yield %>
