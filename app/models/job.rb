@@ -1,6 +1,7 @@
 class Job < ActiveRecord::Base
   attr_accessible :company, :content, :location, :name, :web_source
-  has_one :terminology
+  has_many :terminologies
+  has_many :white_job_lists, through: :terminologies
   has_one :review
 
   def self.grab_monster
@@ -77,14 +78,18 @@ class Job < ActiveRecord::Base
 
   def self.grab_rubyinside
     require 'open-uri'
-    source = 'http://jobs.rubyinside.com/a/jbb/find-jobs'
+    parent_url = 'http://jobs.rubyinside.com'
+    source = "#{parent_url}/a/jbb/find-jobs"
     doc = Nokogiri::HTML(open(source))
     current_uuid_list = Job.where(web_source: 'rubyinside').pluck(:uuid)
 
     unit = Hash.new
     doc.css('tr.listing').each_with_index do |job_post,index|
       if(index%2 == 0)
+
         unit[:detail_url] = job_post.css('.title a').attr('href').value
+        #unit[:detail_url] = "#{parent_url}#{unit[:detail_url]}" unless unit[:detail_url].include?(parent_url)
+
         unit[:name] = job_post.css('.title').text
         unit[:company] = job_post.css('.company').text
         unit[:location] = job_post.css('.location').text
@@ -94,14 +99,37 @@ class Job < ActiveRecord::Base
                       else
                         unit[:detail_url].split('/')[-1]
                       end
+
       elsif !current_uuid_list.include? unit[:uuid].to_i
         job = Job.new
         job.name = unit[:name]
         job.uuid = unit[:uuid]
+
+        begin
+          doc = Nokogiri::HTML(open(source + unit[:detail_url]))
+        rescue Exception
+          attempts += 1
+          retry unless attempts > 2
+          exit(-1)
+        ensure
+          puts "ensure #{attempts}" 
+        end
+        websites = Hash.new
+        websites[unit[:detail_url]]='doc.css(".jam_body_text").text'
+        websites['www.simplyhired.com']='doc.css("#lblDescription").text'
+
+
+        website = unit[:detail_url].split('/')[2]
+        unit[:content] = if(websites.has_key?website)
+                           eval websites[website]
+                         else
+                           job_post.css('.details').text
+                         end
+
         job.detail_url = unit[:detail_url]
         job.company = unit[:company]
         job.location = unit[:location]
-        job.content = job_post.css('.details').text
+        job.content = unit[:content]
         job.web_source = 'rubyinside'
         job.save
 
@@ -153,18 +181,26 @@ class Job < ActiveRecord::Base
     count
   end
 
-  def get_term
-    WhiteJobList.pluck(:name).each do |white|
-      if self.content.downcase.include? white
-        if self.terminology.nil?
-          term = Terminology.create(terms: white)
-          self.terminology = term
+  def get_terms
+    self.terms = nil
+    self.save
+    self.terminologies.destroy_all
+
+    WhiteJobList.all.each do |white|
+      if !self.content.blank? and self.content.downcase.include? white.name
+        self.white_job_lists << white
+        if self.terms.blank?
+          self.terms = white.name
           self.save
         else
-          self.terminology.terms += "|#{white}" 
-          self.terminology.save
+          self.terms += "|#{white.name}"
+            self.save
         end
       end
     end
+  end
+
+  def self.get_all_terms
+    all.each{|x| x.get_terms}
   end
 end
