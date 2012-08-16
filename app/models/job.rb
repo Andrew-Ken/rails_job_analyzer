@@ -1,8 +1,9 @@
 class Job < ActiveRecord::Base
-  attr_accessible :company, :content, :location, :name, :web_source
+  attr_accessible :company, :content, :location, :name, :web_source, :uuid, :detail_url
   has_many :terminologies
   has_many :white_job_lists, through: :terminologies
   has_one :review
+  SOFPAGE = 2
 
   def self.grab_monster
     require 'open-uri'
@@ -175,6 +176,51 @@ class Job < ActiveRecord::Base
         job.content = doc.css('#job .description').text + "\n" + doc.css('#job .job_instruction').text
         job.web_source = 'topruby'
         job.save
+        count += 1
+      end
+    end
+    count
+  end
+
+  def self.grab_sof
+    count = 0
+    require "open-uri"
+    job_list = []
+    SOFPAGE.times.each do |page|
+      doc = Nokogiri::HTML(open('http://careers.stackoverflow.com/jobs?searchTerm=ruby&location=new+york&pg=' + (page + 1).to_s))
+      doc.css('div#jobslist.main .job').each do |job_post|
+        unit = Hash.new
+        unit[:detail_url] = 'http://careers.stackoverflow.com' + job_post.css('a.title').attr('href').value.to_s
+        unit[:name]       = job_post.css('a.title').attr('title').value
+        unit[:company]    = job_post.css('p.employer').attr('title').value
+        unit[:uuid]       = job_post.attr('data-jobid')
+        unit[:location]   = job_post.css('p.location').text.delete("\r\n\t ")
+        job_list << unit
+      end
+    end
+
+    current_uuid_list = Job.where(web_source: 'stackoverflow').pluck(:uuid)
+    job_list.each do |job_post|
+      unless current_uuid_list.include? job_post[:uuid].to_i
+        attempts = 0
+        begin
+          doc = Nokogiri::HTML(open(job_post[:detail_url]))
+        rescue Exception
+          attempts += 1
+          retry unless attempts > 2
+          exit(-1)
+        ensure 
+          puts "ensure #{attempts}" 
+        end
+        Job.create(
+          name:        job_post[:name],
+          detail_url:  job_post[:detail_url],
+          uuid:        job_post[:uuid],
+          location:    job_post[:location],
+          company:     job_post[:company],
+          web_source:  'stackoverflow',
+          content:     doc.css('.jobdetail').to_html
+        )
         count += 1
       end
     end
