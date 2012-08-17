@@ -25,45 +25,66 @@
                 <li><%= link_to "Rate Jobs", review_jobs_path %></li>
               <% end %>
               <li><%= link_to "Contact Us" %></li>
-              <li><a href='javascript:void(0);' style= "align: right" onclick='toggleShowHide("#graphcontainer",1000)'> Show/Hide Graph </a></li>
+              <li><a href='javascript:void(0);' style= "align: right" onclick='toggleShowHide("#graphContainer",1000)'> Show/Hide Graph </a></li>
             </ul>
             <div id="user_nav" class="login logintitletext">
               <% if current_user %>
                 Logged in as <%= current_user.email %>.
                 <%= link_to "Log out", log_out_path %>
               <% else %>
-                <%= link_to "Sign up", sign_up_path %> or
+                <%= link_to "Sign up", "javascript:toggleShowHide('#signupForm', 100)" %> or
                 <%= link_to "log in", "javascript:toggleShowHide('#loginForm',100)" %>
               <% end %>
             </div>
           </div>
         </div>
       </div>
+
       <div id="loginForm" align="right">
         <form action="/log_in" method="post">
-          <table style=" border: 1px solid black">
+          <table style=" border: 1px solid black;">
             <tr valign='center' style="padding-top: 5px">
               <td><span class="loginlabel" >Name: </span></td>
               <td><input type="text" style="width:150px;" name="email"></td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
               <td>password: </td><td><input type="password" style="width:150px;" name="password"></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
               <td><input type="submit" name="go" value="go" valign=top></td>
             </tr>
           </table>
         </form>
       </div>
 
+
+      <div id="signupForm" align="right">
+        <form action="/sign_up" name="user" method="post">
+          <table style=" border: 1px solid black;">
+            <tr valign='center' style="padding-top: 5px">
+              <td><span class="loginlabel" >Name: </span></td>
+              <td><input type="text" style="width:150px;" name="email"></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              <td>password: </td><td><input type="password" style="width:150px;" name="password"></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              <td>confirm password: </td><td><input type="password" style="width:150px;" name="confirmpassword"></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              <td><input type="submit" name="go" value="go" valign=top></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div><%= flash[:error] %></div>
+
       <div id"current_trends">
         <script src="/javascripts/highcharts.js"></script>
         <script src="/javascripts/modules/exporting.js"></script>
-        <div id="graphcontainer" style="min-width: 400px; height: 400px; margin: 0 auto;"></div>
+        <div id="graphContainer" style="min-width: 400px; height: 400px; margin: 0 auto;"></div>
         <script>
           $(function () {
             var chart;
             $(document).ready(function() {
               chart = new Highcharts.Chart({
                 chart: {
-                  renderTo: 'graphcontainer',
+                  renderTo: 'graphContainer',
                   plotBackgroundColor: null,
                   plotBorderWidth: null,
                   plotShadow: false
@@ -96,14 +117,23 @@
                   data: <%=raw WhiteJobList.get_pie_chart_data.to_json %>
               }]
               });
+            hideAll();
             });
-            toggleShowHide("#graphcontainer",1)
-            toggleShowHide("#loginForm",1)
           });
 
+          old_div = null
           function toggleShowHide(divId, speed) {
+            if(old_div!=divId) $(old_div).hide();
+              
             $(divId).slideToggle(speed,'', null);
+            old_div = divId
           } 
+
+          function hideAll() {
+            $.each(['#loginForm','#graphContainer', '#signupForm'],function (index, value) {
+              $(value).hide();
+            })
+          }
 
         </script>
       </div>

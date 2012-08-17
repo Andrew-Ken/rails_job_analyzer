@@ -1,5 +1,11 @@
 
 class ReviewsController < ApplicationController
+  before_filter :check_login
+  def check_login
+    if(session[:user_id]=nil)
+      redirect_to jobs_index_path
+    end
+  end
   # GET /reviews
   # GET /reviews.json
   def index

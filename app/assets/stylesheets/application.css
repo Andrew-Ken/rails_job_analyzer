@@ -13,6 +13,11 @@
  */
 .login {
   text-align: right;
+  color: grey;
+}
+
+.login a {
+  color: white;
 }
 
 .logintitletext {
