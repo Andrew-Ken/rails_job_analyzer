@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120815025917) do
+ActiveRecord::Schema.define(:version => 20120816184607) do
 
   create_table "jobs", :force => true do |t|
     t.string   "name"
@@ -19,11 +19,12 @@ ActiveRecord::Schema.define(:version => 20120815025917) do
     t.string   "location"
     t.text     "content"
     t.string   "web_source"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "uuid"
     t.string   "detail_url"
     t.string   "terms"
+    t.date     "published_at"
   end
 
   create_table "reviews", :force => true do |t|

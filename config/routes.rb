@@ -12,6 +12,7 @@ RailsJob::Application.routes.draw do
 
     collection do 
       get 'review'
+      get 'chart'
     end
   end
 

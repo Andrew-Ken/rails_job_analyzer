@@ -1,5 +1,5 @@
 class Job < ActiveRecord::Base
-  attr_accessible :company, :content, :location, :name, :web_source, :uuid, :detail_url
+  attr_accessible :company, :content, :location, :name, :web_source, :uuid, :detail_url, :published_at
   has_many :terminologies
   has_many :white_job_lists, through: :terminologies
   has_one :review
@@ -157,7 +157,6 @@ class Job < ActiveRecord::Base
     job_list.each do |job_post|
       # TODO: The UUID might require a string
       unless current_uuid_list.include? job_post[:uuid].to_i
-        job = Job.new
         attempts = 0
         begin
           doc = Nokogiri::HTML(open(source + job_post[:detail_url]))
@@ -168,14 +167,16 @@ class Job < ActiveRecord::Base
         ensure
           puts "ensure #{attempts}" 
         end
-        job.name = job_post[:name]
-        job.uuid = job_post[:uuid]
-        job.detail_url = job_post[:detail_url]
-        job.company = doc.css('#job dl.meta a').text
-        job.location = doc.css('#job dl.meta dd').text
-        job.content = doc.css('#job .description').text + "\n" + doc.css('#job .job_instruction').text
-        job.web_source = 'topruby'
-        job.save
+        Job.create(
+          name:         job_post[:name],
+          uuid:         job_post[:uuid],
+          detail_url:   job_post[:detail_url],
+          company:      doc.css('#job dl.meta a').text,
+          location:     doc.css('#job dl.meta dd').text,
+          content:      doc.css('#job .description').text + "\n" + doc.css('#job .job_instruction').text,
+          web_source:   'topruby',
+          published_at: Date.today 
+        )
         count += 1
       end
     end
@@ -219,7 +220,8 @@ class Job < ActiveRecord::Base
           location:    job_post[:location],
           company:     job_post[:company],
           web_source:  'stackoverflow',
-          content:     doc.css('.jobdetail').to_html
+          content:     doc.css('.jobdetail').to_html,
+          published_at:  Date.today
         )
         count += 1
       end

@@ -11,6 +11,55 @@ class JobsController < ApplicationController
     end
   end
 
+  def chart
+    @categories = ['April','May', 'June', 'July', 'August']#WightJobList.plucki(:name)
+    @series = [{
+      type: 'column',
+      name: 'git',
+      data: [3, 2, 1, 3, 4]
+    }, {
+      type: 'column',
+      name: 'jquery',
+      data: [2, 3, 5, 7, 6]
+    }, {
+      type: 'column',
+      name: 'rspec',
+      data: [4, 3, 3, 9, 0]
+    }, {
+      type: 'spline',
+      name: 'Average',
+      data: [3, 2.67, 3, 6.33, 3.33]
+    }, {
+      type: 'pie',
+      name: 'Total consumption',
+      data: [{
+        name: 'git',
+        y: 13,
+        color: '#4572A7' # Jane's color
+      }, {
+        name: 'jquery',
+        y: 23,
+        color: '#AA4643' # John's color
+      }, {
+        name: 'rspec',
+        y: 19,
+        color: '#89A54E' # Joe's color
+      }],
+      center: [100, 80],
+      size: 100,
+      showInLegend: false,
+      dataLabels: {
+        enabled: false
+      }
+    }].to_json   
+    @jobs = Job.all
+    respond_to do |format|
+      format.html
+      format.json {render json: @jobs}
+    end
+  end
+
+
   def review
     @jobs = Job.all
     respond_to do |format|
