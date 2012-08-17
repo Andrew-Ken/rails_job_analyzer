@@ -24,12 +24,13 @@ class JobsController < ApplicationController
     rank = params[:rank].to_i 
     @job = Job.find_by_id(id)
     #TODO need to refact proper
-    if @job.review.blank?
-      @job.review = Review.create(rank: rank) 
+    rev = Review.where(job_id: @job.id, user_id: session[:user_id]).first
+    if(rev.blank?)
+      Review.create(job_id: @job.id, rank: rank, user_id: session[:user_id]) 
     else
-      @job.review.rank = rank 
+      rev.rank = rank
+      rev.save
     end
-
     render text: Review::RANKS[params[:rank].to_i][0]
   end
 

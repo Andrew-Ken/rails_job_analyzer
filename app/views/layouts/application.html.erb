@@ -9,30 +9,53 @@
   <body>
 
 
-      <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-          <div class="container">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="#">Rails Jobs</a>
-            <div class="nav-collapse">
-              <ul class="nav">
-                <li><%= link_to "Browse Jobs", jobs_path %></li>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Rails Jobs</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><%= link_to "Browse Jobs", jobs_path %></li>
+              <% if current_user %>
                 <li><%= link_to "Rate Jobs", review_jobs_path %></li>
-                <li><%= link_to "Contact Us" %></li>
-                <li><a href='javascript:void(0);' style= "align: right" onclick='toggleShowHide(1000)'> Show/Hide Graph </a></li>
-              </ul>
+              <% end %>
+              <li><%= link_to "Contact Us" %></li>
+              <li><a href='javascript:void(0);' style= "align: right" onclick='toggleShowHide("#graphcontainer",1000)'> Show/Hide Graph </a></li>
+            </ul>
+            <div id="user_nav" class="login logintitletext">
+              <% if current_user %>
+                Logged in as <%= current_user.email %>.
+                <%= link_to "Log out", log_out_path %>
+              <% else %>
+                <%= link_to "Sign up", sign_up_path %> or
+                <%= link_to "log in", "javascript:toggleShowHide('#loginForm',100)" %>
+              <% end %>
             </div>
           </div>
         </div>
       </div>
+      <div id="loginForm" align="right">
+        <form action="/log_in" method="post">
+          <table style=" border: 1px solid black">
+            <tr valign='center' style="padding-top: 5px">
+              <td><span class="loginlabel" >Name: </span></td>
+              <td><input type="text" style="width:150px;" name="email"></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+              <td>password: </td><td><input type="password" style="width:150px;" name="password"></td>
+              <td><input type="submit" name="go" value="go" valign=top></td>
+            </tr>
+          </table>
+        </form>
+      </div>
 
       <div id"current_trends">
-        <script src="http://code.highcharts.com/highcharts.js"></script>
-        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <script src="/javascripts/highcharts.js"></script>
+        <script src="/javascripts/modules/exporting.js"></script>
         <div id="graphcontainer" style="min-width: 400px; height: 400px; margin: 0 auto;"></div>
         <script>
           $(function () {
@@ -74,11 +97,12 @@
               }]
               });
             });
-            toggleShowHide(1)
+            toggleShowHide("#graphcontainer",1)
+            toggleShowHide("#loginForm",1)
           });
 
-          function toggleShowHide(speed) {
-            $("#graphcontainer").slideToggle(speed,'', null);
+          function toggleShowHide(divId, speed) {
+            $(divId).slideToggle(speed,'', null);
           } 
 
         </script>

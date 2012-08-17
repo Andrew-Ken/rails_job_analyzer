@@ -15,6 +15,14 @@ RailsJob::Application.routes.draw do
     end
   end
 
+  get "log_out" => "sessions#destroy", :as => "log_out"
+  post "log_in" => "sessions#create", :as => "log_in"
+  post "sign_up" => "users#create", :as => "sign_up"
+
+  root :to => "users#new"
+  resources :users
+  resources :sessions 
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -64,7 +72,7 @@ RailsJob::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => 'job#index'
+  root :to => 'jobs#index'
 
   # See how all your routes lay out with "rake routes"
 

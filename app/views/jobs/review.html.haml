@@ -22,7 +22,7 @@
         %td= job.company
         %td= truncate job.location, lenght: 27
         %td= truncate job.content, length: 27
-        %td= select 'rank', job.id, Review::RANKS, {prompt: 'Select Rank'}, {style: 'width: 120px', job_id: job.id, rank: job.review.try(:rank)} 
+        %td= select 'rank', job.id, Review::RANKS, {prompt: 'Select Rank'}, {style: 'width: 120px', job_id: job.id, rank: job.reviews.find_by_user_id(session[:user_id]).try(:rank)} 
         %td= radio_button_tag 'applied', job.id 
 :javascript
   //TODO 1. need to use jason feedback 2. need to chnage to coffeescipt and seperate page

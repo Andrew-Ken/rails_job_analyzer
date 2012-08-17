@@ -11,3 +11,16 @@
  *= require_self
  *= require_tree .
  */
+.login {
+  text-align: right;
+}
+
+.logintitletext {
+  padding: 9px 10px 11px;
+}
+
+.loginbox {
+  border: 1px solid black;
+  height: 30px;
+}
+
