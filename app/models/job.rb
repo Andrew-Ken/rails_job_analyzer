@@ -1,5 +1,5 @@
 class Job < ActiveRecord::Base
-  attr_accessible :company, :content, :location, :name, :web_source, :uuid, :detail_url
+  attr_accessible :company, :content, :location, :name, :web_source, :uuid, :detail_url, :published_at
   has_many :terminologies
   has_many :white_job_lists, through: :terminologies
   has_many :reviews
@@ -157,7 +157,6 @@ class Job < ActiveRecord::Base
     job_list.each do |job_post|
       # TODO: The UUID might require a string
       unless current_uuid_list.include? job_post[:uuid].to_i
-        job = Job.new
         attempts = 0
         begin
           doc = Nokogiri::HTML(open(source + job_post[:detail_url]))
@@ -168,14 +167,62 @@ class Job < ActiveRecord::Base
         ensure
           puts "ensure #{attempts}" 
         end
-        job.name = job_post[:name]
-        job.uuid = job_post[:uuid]
-        job.detail_url = job_post[:detail_url]
-        job.company = doc.css('#job dl.meta a').text
-        job.location = doc.css('#job dl.meta dd').text
-        job.content = doc.css('#job .description').text + "\n" + doc.css('#job .job_instruction').text
-        job.web_source = 'topruby'
-        job.save
+        Job.create(
+          name:         job_post[:name],
+          uuid:         job_post[:uuid],
+          detail_url:   job_post[:detail_url],
+          company:      doc.css('#job dl.meta a').text,
+          location:     doc.css('#job dl.meta dd').text,
+          content:      doc.css('#job .description').text + "\n" + doc.css('#job .job_instruction').text,
+          web_source:   'topruby',
+          published_at: Date.today 
+        )
+        count += 1
+      end
+    end
+    count
+  end
+
+  def self.grab_sof
+    count = 0
+    require "open-uri"
+    job_list = []
+    SOFPAGE.times.each do |page|
+      doc = Nokogiri::HTML(open('http://careers.stackoverflow.com/jobs?searchTerm=ruby&location=new+york&pg=' + (page + 1).to_s))
+      doc.css('div#jobslist.main .job').each do |job_post|
+        unit = Hash.new
+        unit[:detail_url] = 'http://careers.stackoverflow.com' + job_post.css('a.title').attr('href').value.to_s
+        unit[:name]       = job_post.css('a.title').attr('title').value
+        unit[:company]    = job_post.css('p.employer').attr('title').value
+        unit[:uuid]       = job_post.attr('data-jobid')
+        unit[:location]   = job_post.css('p.location').text.delete("\r\n\t ")
+        job_list << unit
+      end
+    end
+
+    current_uuid_list = Job.where(web_source: 'stackoverflow').pluck(:uuid)
+    job_list.each do |job_post|
+      unless current_uuid_list.include? job_post[:uuid].to_i
+        attempts = 0
+        begin
+          doc = Nokogiri::HTML(open(job_post[:detail_url]))
+        rescue Exception
+          attempts += 1
+          retry unless attempts > 2
+          exit(-1)
+        ensure 
+          puts "ensure #{attempts}" 
+        end
+        Job.create(
+          name:        job_post[:name],
+          detail_url:  job_post[:detail_url],
+          uuid:        job_post[:uuid],
+          location:    job_post[:location],
+          company:     job_post[:company],
+          web_source:  'stackoverflow',
+          content:     doc.css('.jobdetail').to_html,
+          published_at:  Date.today
+        )
         count += 1
       end
     end

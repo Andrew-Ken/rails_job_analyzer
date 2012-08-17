@@ -1,0 +1,50 @@
+%div{id: "container", style: "min-width: 400px; height: 400px; margin: 0 auto"}
+-#%script{src: "highcharts.js"}
+= javascript_include_tag 'highcharts'
+= javascript_include_tag 'modules/exporting'
+-#%script{src: "modules/exporting.js"}
+= @series
+:javascript
+  $(function () {
+      var chart;
+      $(document).ready(function() {
+        //console.log( "#{@series.to_json} ");
+        //return false;
+          chart = new Highcharts.Chart({
+              chart: {
+                  renderTo: 'container'
+              },
+              title: {
+                  text: 'top spec time range report'
+              },
+              xAxis: {
+                categories: #{@categories}//['Apples', 'Oranges', 'Pears', 'Bananas', 'Plums']
+              },
+              tooltip: {
+                  formatter: function() {
+                      var s;
+                      if (this.point.name) { // the pie chart
+                          s = ''+
+                              this.point.name +': '+ this.y +' fruits';
+                      } else {
+                          s = ''+
+                              this.x  +': '+ this.y;
+                      }
+                      return s;
+                  }
+              },
+              labels: {
+                  items: [{
+                      html: 'Total fruit consumption',
+                      style: {
+                          left: '40px',
+                          top: '8px',
+                          color: 'black'
+                      }
+                  }]
+              },
+              series: #{@series}       //<%= @series>
+          });
+      });
+      
+  });

@@ -19,11 +19,12 @@ ActiveRecord::Schema.define(:version => 20120816200312) do
     t.string   "location"
     t.text     "content"
     t.string   "web_source"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "uuid"
     t.string   "detail_url"
     t.string   "terms"
+    t.date     "published_at"
   end
 
   create_table "reviews", :force => true do |t|
